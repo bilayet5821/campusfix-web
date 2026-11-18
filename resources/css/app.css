@@ -1,11 +1,173 @@
-@import 'tailwindcss';
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import './components.css';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+:root {
+    --cf-navy-950: #07182f;
+    --cf-navy-900: #0b2142;
+    --cf-navy-800: #12345e;
+    --cf-blue-700: #1558b0;
+    --cf-blue-600: #1971d4;
+    --cf-blue-500: #2f86e8;
+    --cf-blue-100: #dceeff;
+    --cf-blue-50: #f2f8ff;
+    --cf-teal-600: #087f7b;
+    --cf-teal-500: #0d9488;
+    --cf-teal-100: #ccfbf1;
+    --cf-ink: #14243d;
+    --cf-muted: #5d6c80;
+    --cf-border: #dfe7f0;
+    --cf-surface: #ffffff;
+    --cf-surface-soft: #f6f9fc;
+    --cf-radius-sm: 0.75rem;
+    --cf-radius-md: 1rem;
+    --cf-radius-lg: 1.5rem;
+    --cf-radius-xl: 2rem;
+    --cf-shadow-sm: 0 8px 24px rgba(18, 52, 94, 0.08);
+    --cf-shadow-md: 0 18px 50px rgba(18, 52, 94, 0.12);
+    --cf-shadow-lg: 0 28px 80px rgba(7, 24, 47, 0.17);
+    --cf-transition: 180ms ease;
+    --bs-primary: var(--cf-blue-600);
+    --bs-primary-rgb: 25, 113, 212;
+    --bs-body-color: var(--cf-ink);
+    --bs-body-bg: var(--cf-surface);
+    --bs-border-color: var(--cf-border);
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+}
+
+body {
+    color: var(--cf-ink);
+    font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.7;
+    text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--cf-navy-950);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+}
+
+a {
+    transition: color var(--cf-transition), background-color var(--cf-transition), border-color var(--cf-transition), transform var(--cf-transition), box-shadow var(--cf-transition);
+}
+
+section { position: relative; }
+
+.section-space { padding-block: clamp(4.5rem, 8vw, 7.5rem); }
+.section-soft { background: var(--cf-surface-soft); }
+
+.section-label {
+    align-items: center;
+    color: var(--cf-blue-700);
+    display: inline-flex;
+    font-size: 0.78rem;
+    font-weight: 800;
+    gap: 0.55rem;
+    letter-spacing: 0.12em;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.section-label::before {
+    background: var(--cf-teal-500);
+    border-radius: 1rem;
+    content: '';
+    height: 0.25rem;
+    width: 1.5rem;
+}
+
+.section-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 1rem;
+}
+
+.section-intro {
+    color: var(--cf-muted);
+    font-size: 1.08rem;
+    margin-inline: auto;
+    max-width: 43rem;
+}
+
+.text-muted-cf { color: var(--cf-muted) !important; }
+
+.icon-box {
+    align-items: center;
+    background: var(--cf-blue-50);
+    border: 1px solid var(--cf-blue-100);
+    border-radius: var(--cf-radius-sm);
+    color: var(--cf-blue-700);
+    display: inline-flex;
+    height: 3rem;
+    justify-content: center;
+    width: 3rem;
+}
+
+.icon-box svg { height: 1.4rem; width: 1.4rem; }
+
+.btn {
+    border-radius: 0.72rem;
+    font-weight: 700;
+    padding: 0.75rem 1.3rem;
+}
+
+.btn-primary {
+    background: var(--cf-blue-600);
+    border-color: var(--cf-blue-600);
+    box-shadow: 0 8px 20px rgba(25, 113, 212, 0.22);
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible {
+    background: var(--cf-blue-700);
+    border-color: var(--cf-blue-700);
+    box-shadow: 0 10px 26px rgba(25, 113, 212, 0.28);
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary { border-color: #a9c6e8; color: var(--cf-blue-700); }
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus-visible {
+    background: var(--cf-blue-50);
+    border-color: var(--cf-blue-600);
+    color: var(--cf-blue-700);
+}
+
+:focus-visible {
+    outline: 3px solid rgba(47, 134, 232, 0.48);
+    outline-offset: 3px;
+}
+
+.skip-link {
+    background: var(--cf-navy-950);
+    border-radius: 0 0 0.5rem 0;
+    color: #fff;
+    left: 0;
+    padding: 0.75rem 1rem;
+    position: fixed;
+    top: -5rem;
+    z-index: 2000;
+}
+
+.skip-link:focus { color: #fff; top: 0; }
+
+@media (max-width: 767.98px) {
+    .section-space { padding-block: 4rem; }
+    .btn-mobile-full { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
 }
