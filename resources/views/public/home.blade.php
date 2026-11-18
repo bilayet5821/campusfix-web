@@ -3,6 +3,12 @@
 @section('title', 'Report. Track. Resolve.')
 @section('meta_description', 'CampusFix gives students one clear place to report campus issues, track progress, and receive transparent resolution updates.')
 
+@php
+    $previewAvailable = app()->environment('local') && Route::has('preview.student.issues.create');
+    $reportUrl = Route::has('student.issues.create') ? route('student.issues.create') : ($previewAvailable ? route('preview.student.issues.create') : '#get-started');
+    $registerUrl = Route::has('register') ? route('register') : (app()->environment('local') && Route::has('preview.register') ? route('preview.register') : null);
+@endphp
+
 @section('content')
     <section class="hero-section" id="home" aria-labelledby="hero-title">
         <div class="hero-grid" aria-hidden="true"></div>
@@ -21,7 +27,7 @@
                         CampusFix brings issue reporting, progress tracking, and resolution updates into one simple experience—so students always know what is happening next.
                     </p>
                     <div class="d-flex flex-column flex-sm-row gap-3">
-                        <a class="btn btn-primary btn-lg btn-mobile-full" href="#get-started">
+                        <a class="btn btn-primary btn-lg btn-mobile-full" href="{{ $reportUrl }}">
                             Report an Issue
                             <svg class="ms-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
                         </a>
@@ -208,8 +214,8 @@
                     <span class="section-label">Ready for what comes next</span>
                     <h2 class="section-title" id="cta-title">A better way to speak up about campus issues</h2>
                     <p class="section-intro mb-4">Student accounts and secure issue reporting will be available when the authentication and reporting services are connected.</p>
-                    @if (Route::has('register'))
-                        <a class="btn btn-primary btn-lg" href="{{ route('register') }}">Create Student Account</a>
+                    @if ($registerUrl)
+                        <a class="btn btn-primary btn-lg" href="{{ $registerUrl }}">Create Student Account</a>
                     @else
                         <button class="btn btn-primary btn-lg" type="button" disabled aria-describedby="access-note">Student Access Coming Soon</button>
                         <p class="small text-muted-cf mt-3 mb-0" id="access-note">Frontend preview only—no account or report is created yet.</p>

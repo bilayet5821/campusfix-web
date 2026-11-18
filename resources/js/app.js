@@ -1,5 +1,8 @@
 import './bootstrap';
 import * as bootstrap from 'bootstrap';
+import './sidebar';
+import './image-preview';
+import './form-validation';
 
 window.bootstrap = bootstrap;
 

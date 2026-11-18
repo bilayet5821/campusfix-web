@@ -1,3 +1,10 @@
+@php
+    $previewLogin = app()->environment('local') && Route::has('preview.login') ? route('preview.login') : null;
+    $previewRegister = app()->environment('local') && Route::has('preview.register') ? route('preview.register') : null;
+    $loginUrl = Route::has('login') ? route('login') : $previewLogin;
+    $registerUrl = Route::has('register') ? route('register') : $previewRegister;
+@endphp
+
 <nav class="navbar navbar-expand-lg fixed-top site-navbar" data-site-navbar aria-label="Primary navigation">
     <div class="container">
         <x-brand />
@@ -15,16 +22,16 @@
             </ul>
 
             <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2 mt-3 mt-lg-0">
-                @if (Route::has('login'))
-                    <a class="btn btn-link text-decoration-none fw-bold" href="{{ route('login') }}">Login</a>
+                @if ($loginUrl)
+                    <a class="btn btn-link text-decoration-none fw-bold" href="{{ $loginUrl }}">Login</a>
                 @else
                     <span class="auth-placeholder" aria-disabled="true" title="Student login will be available when authentication is connected">
                         Login <span class="soon-badge">Soon</span>
                     </span>
                 @endif
 
-                @if (Route::has('register'))
-                    <a class="btn btn-primary" href="{{ route('register') }}">Get Started</a>
+                @if ($registerUrl)
+                    <a class="btn btn-primary" href="{{ $registerUrl }}">Get Started</a>
                 @else
                     <a class="btn btn-primary" data-navbar-link href="#get-started">Get Started</a>
                 @endif

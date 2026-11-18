@@ -1,5 +1,7 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import './components.css';
+@import './auth.css';
+@import './dashboard.css';
 
 :root {
     --cf-navy-950: #07182f;
