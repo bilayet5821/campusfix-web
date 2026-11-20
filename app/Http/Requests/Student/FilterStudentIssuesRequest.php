@@ -8,6 +8,8 @@ use Illuminate\Validation\Rule;
 
 class FilterStudentIssuesRequest extends FormRequest
 {
+    protected $redirectRoute = 'student.issues.index';
+
     public function authorize(): bool
     {
         return $this->user()?->isStudent() ?? false;

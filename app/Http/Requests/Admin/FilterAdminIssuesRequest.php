@@ -9,6 +9,8 @@ use Illuminate\Validation\Rule;
 
 class FilterAdminIssuesRequest extends FormRequest
 {
+    protected $redirectRoute = 'admin.issues.index';
+
     public function authorize(): bool
     {
         return $this->user()?->isAdmin() ?? false;

@@ -1,59 +1,78 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CampusFix — Smart Campus Issue Reporting & Resolution System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+CampusFix is a full-stack Laravel 12 web application for reporting, tracking, triaging, and resolving campus maintenance and facility issues (CSE 416 — Web Engineering Lab).
 
-## About Laravel
+## Tech Stack
+- **Backend:** PHP 8.2+ / Laravel 12 (Blade, Eloquent ORM, Form Requests, Policies, Role Middleware, DB Transactions)
+- **Frontend:** HTML5, CSS3, Bootstrap 5, Vite, Laravel Blade Components
+- **Database:** MySQL (XAMPP / MariaDB for demo & production) or SQLite (zero-config local development & testing)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Quick Local Setup (SQLite — Fastest)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```bash
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+```
 
-## Learning Laravel
+Create an empty SQLite database file (`database/database.sqlite`), then migrate, seed, build assets, and start the server:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+# PowerShell: New-Item -ItemType File -Path database/database.sqlite -Force
+# Bash:       touch database/database.sqlite
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+php artisan migrate --seed
+npm run build
+php artisan serve
+```
 
-## Laravel Sponsors
+Visit `http://127.0.0.1:8000`.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## MySQL Setup (XAMPP — Lab Demo)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+1. Start **Apache** and **MySQL** in XAMPP Control Panel.
+2. Create a database named `campusfix` in phpMyAdmin (`http://localhost/phpmyadmin`).
+3. Update `.env`:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=campusfix
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+4. Run migrations and demo seeders:
+   ```bash
+   php artisan migrate:fresh --seed
+   npm run build
+   php artisan serve
+   ```
 
-## Contributing
+> **Note on Image Uploads:** CampusFix allows up to 5 images (JPG, PNG, WebP) up to 5 MB each. If PHP's default `upload_max_filesize` (2M) or `post_max_size` (8M) is too small for multi-image uploads, increase them in `php.ini` (e.g. `upload_max_filesize = 8M`, `post_max_size = 32M`).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## Pre-Seeded Demo Accounts
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+| Role | Name | Email | Password |
+|---|---|---|---|
+| **Administrator** | Nadia Karim | `admin@campusfix.edu` | `Admin@12345` |
+| **Administrator** | Mahmudul Hasan (Facilities) | `facilities@campusfix.edu` | `Admin@12345` |
+| **Administrator** | Farhana Akter (IT Support) | `itsupport@campusfix.edu` | `Admin@12345` |
+| **Student** | Ariana Rahman (`221-15-5001`) | `student@campusfix.edu` | `Student@12345` |
+| **Student** | Tanvir Ahmed (`221-15-5002`) | `student2@campusfix.edu` | `Student@12345` |
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Running Automated Tests
 
-## License
+```bash
+php artisan test
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The test suite verifies authentication, role enforcement, issue ownership policies, private attachment authorization, file upload validation (type, size, count, spoofed extensions), XSS escaping, filtering, pagination, transactional status-history logging, and seeder idempotency.

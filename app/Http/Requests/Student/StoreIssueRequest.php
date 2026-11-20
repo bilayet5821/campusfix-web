@@ -3,7 +3,9 @@
 namespace App\Http\Requests\Student;
 
 use App\Enums\IssuePriority;
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
 
 class StoreIssueRequest extends FormRequest
@@ -48,6 +50,19 @@ class StoreIssueRequest extends FormRequest
                 'mimes:jpg,jpeg,png,webp',
                 'mimetypes:image/jpeg,image/png,image/webp',
                 'max:5120',
+                function (string $attribute, mixed $value, Closure $fail): void {
+                    if (! $value instanceof UploadedFile) {
+                        return;
+                    }
+
+                    $path = $value->getRealPath();
+                    $info = $path ? @getimagesize($path) : false;
+                    $allowedTypes = [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP];
+
+                    if ($info === false || ! in_array($info[2] ?? null, $allowedTypes, true)) {
+                        $fail('Each attachment must be a genuine JPG, PNG, or WebP image file.');
+                    }
+                },
             ],
             'accuracy_confirmed' => ['accepted'],
         ];
