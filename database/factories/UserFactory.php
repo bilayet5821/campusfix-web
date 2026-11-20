@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\UserRole;
+use App\Models\Department;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -26,11 +28,31 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
+            'student_id' => '221-15-'.fake()->unique()->numerify('####'),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'role' => UserRole::Student->value,
+            'department_id' => Department::factory(),
+            'phone' => fake()->numerify('017########'),
             'remember_token' => Str::random(10),
         ];
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::Admin->value,
+            'student_id' => null,
+            'department_id' => null,
+        ]);
+    }
+
+    public function student(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::Student->value,
+        ]);
     }
 
     /**
