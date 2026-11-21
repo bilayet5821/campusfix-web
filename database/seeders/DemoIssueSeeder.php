@@ -124,7 +124,7 @@ class DemoIssueSeeder extends Seeder
                 'reference_number' => 'CFX-2026-1006',
                 'reporter_id' => $student2->id,
                 'category' => 'Water & Plumbing',
-                'location' => 'Student Cafeteria — Main Dining Hall',
+                'location' => 'Student Center — Main Dining Hall',
                 'assigned_to' => $facilitiesAdmin?->id,
                 'title' => 'Drinking water dispenser leaking near cafeteria washbasin',
                 'description' => 'Water is slowly pooling beneath the left drinking water station during lunch hours, making the tiled floor slippery for students.',

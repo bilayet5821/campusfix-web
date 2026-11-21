@@ -4,6 +4,7 @@
     $preview = request()->routeIs('preview.*');
     $dashboardUrl = $preview ? route('preview.admin.dashboard') : (Route::has('admin.dashboard') ? route('admin.dashboard') : '#');
     $issuesUrl = $preview ? route('preview.admin.issues.index') : (Route::has('admin.issues.index') ? route('admin.issues.index') : '#');
+    $locationsUrl = !$preview && Route::has('admin.locations.index') ? route('admin.locations.index') : null;
     $name = data_get($admin, 'name', 'Administrator');
     $email = data_get($admin, 'email', 'Admin account');
     $initials = collect(explode(' ', $name))->filter()->take(2)->map(fn ($part) => strtoupper(substr($part, 0, 1)))->join('');
@@ -21,6 +22,12 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 4h14v16H5zM8 9h8M8 13h8M8 17h5"/></svg>
             Issue Management
         </a>
+        @if ($locationsUrl)
+            <a data-sidebar-link class="student-nav-link {{ request()->routeIs('admin.locations.*', 'admin.buildings.*') ? 'active' : '' }}" href="{{ $locationsUrl }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/></svg>
+                Buildings &amp; Rooms
+            </a>
+        @endif
     </nav>
 
     <div class="sidebar-profile">

@@ -3,6 +3,7 @@ import * as bootstrap from 'bootstrap';
 import './sidebar';
 import './image-preview';
 import './form-validation';
+import './location-selector';
 
 window.bootstrap = bootstrap;
 

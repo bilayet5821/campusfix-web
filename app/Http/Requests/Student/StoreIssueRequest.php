@@ -36,10 +36,17 @@ class StoreIssueRequest extends FormRequest
                 'integer',
                 Rule::exists('categories', 'id')->where('is_active', true),
             ],
+            'building_id' => [
+                'required',
+                'integer',
+                Rule::exists('buildings', 'id')->where('is_active', true),
+            ],
             'location_id' => [
                 'required',
                 'integer',
-                Rule::exists('locations', 'id')->where('is_active', true),
+                Rule::exists('locations', 'id')
+                    ->where('is_active', true)
+                    ->where('building_id', ctype_digit((string) $this->input('building_id')) ? (int) $this->input('building_id') : 0),
             ],
             'description' => ['required', 'string', 'min:20', 'max:1500'],
             'priority' => ['nullable', 'string', Rule::in(IssuePriority::values())],
@@ -76,8 +83,10 @@ class StoreIssueRequest extends FormRequest
         return [
             'category_id.required' => 'Please choose an issue category.',
             'category_id.exists' => 'The selected category is not available.',
-            'location_id.required' => 'Please choose a campus location.',
-            'location_id.exists' => 'The selected campus location is not available.',
+            'building_id.required' => 'Please choose a campus building.',
+            'building_id.exists' => 'The selected campus building is not available.',
+            'location_id.required' => 'Please choose a room or area.',
+            'location_id.exists' => 'The selected room is not available in the chosen building.',
             'attachments.max' => 'You may upload at most 5 supporting images.',
             'attachments.*.image' => 'Each attachment must be a valid image file.',
             'attachments.*.mimes' => 'Only JPG, PNG, and WebP images are allowed.',

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\IssueController as AdminIssueController;
+use App\Http\Controllers\Admin\LocationController as AdminLocationController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -47,6 +48,10 @@ Route::middleware('auth')->group(function () {
             Route::get('/issues/{issue}', [AdminIssueController::class, 'show'])->name('issues.show');
             Route::get('/issues/{issue}/edit', [AdminIssueController::class, 'edit'])->name('issues.edit');
             Route::patch('/issues/{issue}', [AdminIssueController::class, 'update'])->name('issues.update');
+
+            Route::get('/locations', [AdminLocationController::class, 'index'])->name('locations.index');
+            Route::post('/buildings', [AdminLocationController::class, 'storeBuilding'])->name('buildings.store');
+            Route::post('/locations', [AdminLocationController::class, 'storeLocation'])->name('locations.store');
         });
 });
 

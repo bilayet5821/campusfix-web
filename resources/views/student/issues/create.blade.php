@@ -10,7 +10,10 @@
     $formAction = $canSubmit ? route('student.issues.store') : url()->current();
     $issuesUrl = $preview ? route('preview.student.issues.index') : (Route::has('student.issues.index') ? route('student.issues.index') : '#');
     $categoryOptions = $categories ?? collect();
+    $buildingOptions = $buildings ?? collect();
     $locationOptions = $locations ?? collect();
+    $selectedBuildingId = (string) old('building_id', '');
+    $selectedLocationId = (string) old('location_id', '');
 @endphp
 
 @section('breadcrumbs')
@@ -53,13 +56,38 @@
                 </section>
 
                 <section class="report-form-section" aria-labelledby="report-location-title">
-                    <div class="d-flex gap-3 mb-4"><span class="form-section-number">2</span><div><h2 class="h5 mb-1" id="report-location-title">Location and description</h2><p class="text-muted-cf small mb-0">Explain where the issue is and what you observed.</p></div></div>
-                    <div class="mb-3">
-                        <label class="form-label" for="location_id">Campus location <span class="required-mark">*</span></label>
-                        <select class="form-select @error('location_id') is-invalid @enderror" id="location_id" name="location_id" required>
-                            <option value="">Choose a building or area</option>
-                            @foreach ($locationOptions as $location)<option value="{{ data_get($location, 'id') }}" @selected((string) old('location_id') === (string) data_get($location, 'id'))>{{ data_get($location, 'name') }}</option>@endforeach
-                        </select><x-form-error field="location_id" />
+                    <div class="d-flex gap-3 mb-4"><span class="form-section-number">2</span><div><h2 class="h5 mb-1" id="report-location-title">Location and description</h2><p class="text-muted-cf small mb-0">Select the building and room where the issue is located, then describe what you observed.</p></div></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="building_id">Building <span class="required-mark">*</span></label>
+                            <select class="form-select @error('building_id') is-invalid @enderror" id="building_id" name="building_id" data-building-select="location_id" required>
+                                <option value="">Choose a building</option>
+                                @foreach ($buildingOptions as $building)
+                                    @php
+                                        $bId = (string) data_get($building, 'id');
+                                        $bCode = data_get($building, 'code');
+                                    @endphp
+                                    <option value="{{ $bId }}" @selected($selectedBuildingId === $bId)>{{ data_get($building, 'name') }}@if($bCode) ({{ $bCode }})@endif</option>
+                                @endforeach
+                            </select>
+                            <x-form-error field="building_id" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="location_id">Room / Area <span class="required-mark">*</span></label>
+                            <select class="form-select @error('location_id') is-invalid @enderror" id="location_id" name="location_id" data-selected-location="{{ $selectedLocationId }}" required>
+                                <option value="">Select a building first</option>
+                                @foreach ($locationOptions as $location)
+                                    @php
+                                        $locId = (string) data_get($location, 'id');
+                                        $locBuildingId = (string) data_get($location, 'building_id');
+                                        $roomName = data_get($location, 'room_or_area') ?: data_get($location, 'name');
+                                        $floorName = data_get($location, 'floor');
+                                    @endphp
+                                    <option value="{{ $locId }}" data-building-id="{{ $locBuildingId }}" @selected($selectedLocationId === $locId)>{{ $roomName }}@if($floorName) ({{ $floorName }})@endif</option>
+                                @endforeach
+                            </select>
+                            <x-form-error field="location_id" />
+                        </div>
                     </div>
                     <div>
                         <div class="d-flex justify-content-between gap-3"><label class="form-label" for="description">Description <span class="required-mark">*</span></label><span class="form-hint" id="description-count">0 / 1500</span></div>

@@ -112,17 +112,20 @@ class StudentIssueTest extends TestCase
         $otherStudent = User::factory()->student()->create();
         $admin = User::factory()->admin()->create();
         $category = Category::factory()->create(['name' => 'Computer Lab']);
-        $location = Location::factory()->create(['name' => 'Knowledge Tower — Lab C-302']);
+        $location = Location::factory()->create(['room_or_area' => 'Lab C-302']);
+        $building = $location->campusBuilding;
 
         $this->actingAs($student)
             ->get(route('student.issues.create'))
             ->assertOk()
             ->assertSee('Computer Lab')
-            ->assertSee('Knowledge Tower — Lab C-302');
+            ->assertSee($building->name)
+            ->assertSee('Lab C-302');
 
         $response = $this->actingAs($student)->post(route('student.issues.store'), [
             'title' => 'Lab PC-09 fails to boot into OS',
             'category_id' => $category->id,
+            'building_id' => $building->id,
             'location_id' => $location->id,
             'description' => 'Desktop computer PC-09 turns on with fan noise but remains stuck on a black screen before BIOS.',
             'priority' => '',
@@ -192,12 +195,14 @@ class StudentIssueTest extends TestCase
         $this->actingAs($student)->post(route('student.issues.store'), [
             'title' => 'Hi',
             'category_id' => $inactiveCategory->id,
+            'building_id' => 99999,
             'location_id' => 99999,
             'description' => 'Too short',
             'priority' => 'super_urgent',
         ])->assertSessionHasErrors([
             'title',
             'category_id',
+            'building_id',
             'location_id',
             'description',
             'priority',
@@ -208,6 +213,7 @@ class StudentIssueTest extends TestCase
         $this->actingAs($student)->post(route('student.issues.store'), [
             'title' => 'Valid issue title here',
             'category_id' => $category->id,
+            'building_id' => $location->building_id,
             'location_id' => $location->id,
             'description' => 'This description is long enough to satisfy the twenty character minimum requirement.',
             'attachments' => [
@@ -220,6 +226,7 @@ class StudentIssueTest extends TestCase
         $this->actingAs($student)->post(route('student.issues.store'), [
             'title' => 'Valid issue title here',
             'category_id' => $category->id,
+            'building_id' => $location->building_id,
             'location_id' => $location->id,
             'description' => 'This description is long enough to satisfy the twenty character minimum requirement.',
             'attachments' => [
@@ -236,6 +243,7 @@ class StudentIssueTest extends TestCase
         $this->actingAs($student)->post(route('student.issues.store'), [
             'title' => 'Valid issue title here',
             'category_id' => $category->id,
+            'building_id' => $location->building_id,
             'location_id' => $location->id,
             'description' => 'This description is long enough to satisfy the twenty character minimum requirement.',
             'attachments' => $sixImages,
@@ -331,6 +339,7 @@ class StudentIssueTest extends TestCase
         $this->actingAs($student)->post(route('student.issues.store'), [
             'title' => 'Spoofed upload security test',
             'category_id' => $category->id,
+            'building_id' => $location->building_id,
             'location_id' => $location->id,
             'description' => 'Testing that a PHP file renamed with a .jpg extension is rejected on the server.',
             'attachments' => [
@@ -343,6 +352,7 @@ class StudentIssueTest extends TestCase
         $this->actingAs($student)->post(route('student.issues.store'), [
             'title' => 'Valid WebP evidence upload test',
             'category_id' => $category->id,
+            'building_id' => $location->building_id,
             'location_id' => $location->id,
             'description' => 'Uploading a genuine WebP image file should be accepted and stored safely.',
             'attachments' => [
@@ -368,6 +378,7 @@ class StudentIssueTest extends TestCase
         $this->actingAs($student)->post(route('student.issues.store'), [
             'title' => "Broken switch {$xss}",
             'category_id' => $category->id,
+            'building_id' => $location->building_id,
             'location_id' => $location->id,
             'description' => "Detailed issue report containing unsafe HTML {$xss} to verify Blade escaping.",
             'accuracy_confirmed' => '1',

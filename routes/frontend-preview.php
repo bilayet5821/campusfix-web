@@ -36,11 +36,17 @@ $categories = collect([
     (object) ['id' => 'preview-maintenance', 'name' => 'Maintenance'],
 ]);
 
+$buildings = collect([
+    (object) ['id' => 'preview-b-main', 'name' => 'Main Building', 'code' => 'MB'],
+    (object) ['id' => 'preview-b-lib', 'name' => 'Central Library', 'code' => 'LIB'],
+    (object) ['id' => 'preview-b-sc', 'name' => 'Student Center', 'code' => 'SC'],
+]);
+
 $locations = collect([
-    (object) ['id' => 'preview-main-402', 'name' => 'Main Building — Room 402'],
-    (object) ['id' => 'preview-library', 'name' => 'Central Library'],
-    (object) ['id' => 'preview-lab', 'name' => 'Computer Lab'],
-    (object) ['id' => 'preview-cafeteria', 'name' => 'Student Cafeteria'],
+    (object) ['id' => 'preview-main-402', 'building_id' => 'preview-b-main', 'name' => 'Main Building — Room 402', 'room_or_area' => 'Room 402', 'floor' => '4th Floor'],
+    (object) ['id' => 'preview-lab', 'building_id' => 'preview-b-main', 'name' => 'Main Building — Computer Lab', 'room_or_area' => 'Computer Lab', 'floor' => '3rd Floor'],
+    (object) ['id' => 'preview-library', 'building_id' => 'preview-b-lib', 'name' => 'Central Library — Reading Area', 'room_or_area' => 'Reading Area', 'floor' => '2nd Floor'],
+    (object) ['id' => 'preview-cafeteria', 'building_id' => 'preview-b-sc', 'name' => 'Student Center — Cafeteria', 'room_or_area' => 'Cafeteria', 'floor' => '1st Floor'],
 ]);
 
 $sampleIssues = function () use ($student, $categories, $locations) {
@@ -99,7 +105,7 @@ $sampleIssues = function () use ($student, $categories, $locations) {
     ]);
 };
 
-Route::prefix('preview')->name('preview.')->group(function () use ($student, $admin, $assignees, $departments, $categories, $locations, $sampleIssues) {
+Route::prefix('preview')->name('preview.')->group(function () use ($student, $admin, $assignees, $departments, $categories, $buildings, $locations, $sampleIssues) {
     Route::get('/login', fn () => view('auth.login'))->name('login');
     Route::get('/register', fn () => view('auth.register', ['departments' => $departments]))->name('register');
 
@@ -135,6 +141,7 @@ Route::prefix('preview')->name('preview.')->group(function () use ($student, $ad
     Route::get('/student/issues/create', fn () => view('student.issues.create', [
         'student' => $student,
         'categories' => $categories,
+        'buildings' => $buildings,
         'locations' => $locations,
     ]))->name('student.issues.create');
 

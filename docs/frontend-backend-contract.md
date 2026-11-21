@@ -22,6 +22,9 @@ This document defines the production interfaces expected by the Blade frontend. 
 | GET | `admin.issues.show` | Admin issue details |
 | GET | `admin.issues.edit` | Admin issue management form |
 | PATCH | `admin.issues.update` | Update workflow fields and notes |
+| GET | `admin.locations.index` | Admin buildings & rooms directory and creation forms |
+| POST | `admin.buildings.store` | Add a new campus building (admin only) |
+| POST | `admin.locations.store` | Add a new room/area under a building (admin only) |
 
 Production routes should use `auth` middleware and role/authorization middleware or policies. Student show routes must enforce ownership server-side. Admin routes must require the `admin` role.
 
@@ -50,7 +53,8 @@ The form uses `multipart/form-data`.
 
 - `title` — required, maximum 120 characters
 - `category_id` — required existing category ID
-- `location_id` — required existing location ID
+- `building_id` — required existing active building ID
+- `location_id` — required existing active room/location ID belonging to `building_id`
 - `description` — required, 20–1500 characters
 - `priority` — nullable enum; the backend may override student-selected priority
 - `attachments[]` — optional image files
@@ -74,7 +78,7 @@ Changing status should create a status-history record in the same transaction. D
 |---|---|
 | `auth.register` | `$departments` |
 | `student.dashboard` | `$student`, `$stats`, `$recentIssues`, `$recentActivity` |
-| `student.issues.create` | `$student`, `$categories`, `$locations` |
+| `student.issues.create` | `$student`, `$categories`, `$buildings`, `$locations` |
 | `student.issues.index` | `$student`, `$issues`, `$filters`, `$categories` |
 | `student.issues.show` | `$student`, `$issue`, `$statusHistory` |
 | `admin.dashboard` | `$admin`, `$stats`, `$recentIssues`, `$statusDistribution`, `$priorityDistribution`, `$categoryDistribution`, `$recentActivity` |

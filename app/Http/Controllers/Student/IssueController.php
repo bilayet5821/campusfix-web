@@ -7,6 +7,7 @@ use App\Enums\IssueStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Student\FilterStudentIssuesRequest;
 use App\Http\Requests\Student\StoreIssueRequest;
+use App\Models\Building;
 use App\Models\Category;
 use App\Models\Issue;
 use App\Models\Location;
@@ -41,9 +42,16 @@ class IssueController extends Controller
     {
         $student = $request->user();
         $categories = Category::active()->orderBy('name')->get();
-        $locations = Location::active()->orderBy('name')->get();
+        $buildings = Building::active()
+            ->with(['activeLocations'])
+            ->orderBy('name')
+            ->get();
+        $locations = Location::active()
+            ->orderBy('room_or_area')
+            ->orderBy('name')
+            ->get();
 
-        return view('student.issues.create', compact('student', 'categories', 'locations'));
+        return view('student.issues.create', compact('student', 'categories', 'buildings', 'locations'));
     }
 
     public function store(StoreIssueRequest $request): RedirectResponse
