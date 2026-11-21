@@ -62,6 +62,15 @@ class UserFactory extends Factory
         ]);
     }
 
+    public function teacher(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::Teacher->value,
+            'permissions' => FeaturePermission::defaultsForRole(UserRole::Teacher),
+            'student_id' => null,
+        ]);
+    }
+
     public function student(): static
     {
         return $this->state(fn (array $attributes) => [

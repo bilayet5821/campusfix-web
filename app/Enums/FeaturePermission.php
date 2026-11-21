@@ -22,7 +22,7 @@ enum FeaturePermission: string
     public function label(): string
     {
         return match ($this) {
-            self::ViewStudentPortal => 'Student Portal & Own Reports',
+            self::ViewStudentPortal => 'Reporter Portal & Own Reports',
             self::CreateIssues => 'Report New Issues',
             self::ViewAdminDashboard => 'Operations Dashboard & Analytics',
             self::ManageIssues => 'View & Manage All Issues',
@@ -34,7 +34,7 @@ enum FeaturePermission: string
     public function description(): string
     {
         return match ($this) {
-            self::ViewStudentPortal => 'Access the student dashboard and track personal submitted reports.',
+            self::ViewStudentPortal => 'Access the reporter dashboard and track personal submitted reports.',
             self::CreateIssues => 'Submit new campus issue reports with photos.',
             self::ViewAdminDashboard => 'View campus-wide issue metrics, distributions, and activity.',
             self::ManageIssues => 'View all campus issues, update statuses/priorities, assign staff, and add notes.',
@@ -46,7 +46,7 @@ enum FeaturePermission: string
     public function group(): string
     {
         return match ($this) {
-            self::ViewStudentPortal, self::CreateIssues => 'Student Features',
+            self::ViewStudentPortal, self::CreateIssues => 'Reporter Features (Students & Teachers)',
             self::ViewAdminDashboard, self::ManageIssues, self::ManageLocations, self::ManageUsers => 'Administrative & Staff Features',
         };
     }
@@ -69,7 +69,7 @@ enum FeaturePermission: string
                 self::ViewAdminDashboard->value,
                 self::ManageIssues->value,
             ],
-            UserRole::Student => [
+            UserRole::Teacher, UserRole::Student => [
                 self::ViewStudentPortal->value,
                 self::CreateIssues->value,
             ],

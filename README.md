@@ -59,11 +59,12 @@ Visit `http://127.0.0.1:8000`.
 
 ## Pre-Seeded Demo Accounts
 
-> **Account Provisioning & Feature Access Control:** Public self-registration is disabled. Only administrators with the **Create Accounts & Manage Feature Access** permission (`/admin/users`) can create new accounts (`Student`, `Maintenance Staff`, or `Administrator`) and grant or revoke specific features for any user.
+> **Account Provisioning & Feature Access Control:** Public self-registration is disabled. Only administrators with the **Create Accounts & Manage Feature Access** permission (`/admin/users`) can create new accounts (`Student`, `Teacher`, `Maintenance Staff`, or `Administrator`) and grant or revoke specific features for any user.
 
 | Role | Name | Email | Password |
 |---|---|---|---|
-| **Administrator** (All features) | Nadia Karim | `admin@campusfix.edu` | `Admin@12345` |
+| **Administrator** (All admin features) | Nadia Karim | `admin@campusfix.edu` | `Admin@12345` |
+| **Teacher** (Reporter Portal & Issues) | Dr. Kamrul Islam | `teacher@campusfix.edu` | `Teacher@12345` |
 | **Maintenance Staff** (Dashboard & Issues) | Mahmudul Hasan (Facilities) | `facilities@campusfix.edu` | `Admin@12345` |
 | **Maintenance Staff** (Dashboard & Issues) | Farhana Akter (IT Support) | `itsupport@campusfix.edu` | `Admin@12345` |
 | **Student** (`221-15-5001`) | Ariana Rahman | `student@campusfix.edu` | `Student@12345` |

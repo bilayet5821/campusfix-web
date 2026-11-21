@@ -74,13 +74,13 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge {{ $account->isAdmin() ? 'text-bg-primary' : ($account->isStaff() ? 'text-bg-info text-dark' : 'text-bg-light border text-dark') }}">
+                                    <span class="badge {{ $account->isAdmin() ? 'text-bg-primary' : ($account->isTeacher() ? 'text-bg-warning text-dark' : ($account->isStaff() ? 'text-bg-info text-dark' : 'text-bg-light border text-dark')) }}">
                                         {{ $account->roleLabel() }}
                                     </span>
                                 </td>
                                 <td>
                                     <strong class="d-block">{{ $account->department?->name ?? '—' }}</strong>
-                                    <span class="text-muted-cf small">{{ $account->student_id ?? 'No student ID' }}</span>
+                                    <span class="text-muted-cf small">{{ $account->student_id ?? ($account->isTeacher() ? 'Faculty / Teacher' : 'No student ID') }}</span>
                                 </td>
                                 <td>
                                     @php

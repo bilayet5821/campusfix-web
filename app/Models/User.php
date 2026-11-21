@@ -121,6 +121,11 @@ class User extends Authenticatable
         return $this->role === UserRole::Staff->value;
     }
 
+    public function isTeacher(): bool
+    {
+        return $this->role === UserRole::Teacher->value;
+    }
+
     public function isStudent(): bool
     {
         return $this->role === UserRole::Student->value;

@@ -60,6 +60,33 @@ class DemoUserSeeder extends Seeder
             );
         }
 
+        $teachers = [
+            [
+                'name' => 'Dr. Kamrul Islam',
+                'email' => 'teacher@campusfix.edu',
+                'password' => 'Teacher@12345',
+                'department_id' => $cse?->id,
+                'phone' => '01711500001',
+            ],
+        ];
+
+        foreach ($teachers as $teacher) {
+            User::updateOrCreate(
+                ['email' => $teacher['email']],
+                [
+                    'name' => $teacher['name'],
+                    'student_id' => null,
+                    'password' => Hash::make($teacher['password']),
+                    'role' => UserRole::Teacher->value,
+                    'permissions' => FeaturePermission::defaultsForRole(UserRole::Teacher),
+                    'is_active' => true,
+                    'department_id' => $teacher['department_id'],
+                    'phone' => $teacher['phone'],
+                    'email_verified_at' => now(),
+                ]
+            );
+        }
+
         $students = [
             [
                 'name' => 'Ariana Rahman',

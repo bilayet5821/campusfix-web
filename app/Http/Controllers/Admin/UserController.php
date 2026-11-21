@@ -43,7 +43,7 @@ class UserController extends Controller
                 ($filters['status'] ?? '') === 'inactive',
                 fn (Builder $query) => $query->where('is_active', false)
             )
-            ->orderByRaw("CASE role WHEN 'admin' THEN 1 WHEN 'staff' THEN 2 ELSE 3 END")
+            ->orderByRaw("CASE role WHEN 'admin' THEN 1 WHEN 'teacher' THEN 2 WHEN 'staff' THEN 3 ELSE 4 END")
             ->orderBy('name')
             ->paginate(12)
             ->withQueryString();

@@ -14,14 +14,15 @@
     $dashboardUrl = $preview ? route('preview.student.dashboard') : (Route::has('student.dashboard') ? route('student.dashboard') : '#');
     $createUrl = $preview ? route('preview.student.issues.create') : (Route::has('student.issues.create') ? route('student.issues.create') : '#');
     $issuesUrl = $preview ? route('preview.student.issues.index') : (Route::has('student.issues.index') ? route('student.issues.index') : '#');
-    $name = data_get($student, 'name', 'Student User');
-    $studentId = data_get($student, 'student_id') ?: data_get($student, 'email', 'Student account');
+    $isTeacher = data_get($student, 'role') === 'teacher';
+    $name = data_get($student, 'name', $isTeacher ? 'Teacher User' : 'Student User');
+    $studentId = data_get($student, 'student_id') ?: ($isTeacher ? 'Teacher account' : data_get($student, 'email', 'Student account'));
     $initials = collect(explode(' ', $name))->filter()->take(2)->map(fn ($part) => strtoupper(substr($part, 0, 1)))->join('');
 @endphp
 
 <div class="d-flex flex-column h-100">
     @unless ($mobile)<x-brand light />@endunless
-    <p class="student-sidebar-label">Student workspace</p>
+    <p class="student-sidebar-label">{{ $isTeacher ? 'Teacher workspace' : 'Student workspace' }}</p>
     <nav class="student-nav" aria-label="Student navigation">
         @if ($canStudentPortal)
             <a data-sidebar-link class="student-nav-link {{ request()->routeIs('student.dashboard', 'preview.student.dashboard') ? 'active' : '' }}" href="{{ $dashboardUrl }}">

@@ -29,7 +29,7 @@ This document defines the production interfaces expected by the Blade frontend. 
 | GET | `admin.users.edit` | Edit user account & toggle feature access permissions |
 | PATCH | `admin.users.update` | Update user account, active status, and feature permissions |
 
-Public self-registration is disabled; only administrators with `manage_users` can create accounts and grant/revoke individual feature permissions (`view_student_portal`, `create_issues`, `view_admin_dashboard`, `manage_issues`, `manage_locations`, `manage_users`) for any user type (`student`, `staff`, `admin`). Student show routes enforce ownership server-side.
+Public self-registration is disabled; only administrators with `manage_users` can create accounts and grant/revoke individual feature permissions (`view_student_portal`, `create_issues`, `view_admin_dashboard`, `manage_issues`, `manage_locations`, `manage_users`) for any user type (`student`, `teacher`, `staff`, `admin`). Student show routes enforce ownership server-side.
 
 ## Form fields
 

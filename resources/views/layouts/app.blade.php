@@ -34,7 +34,7 @@
                 <button class="mobile-menu-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#studentSidebarMobile" aria-controls="studentSidebarMobile" aria-label="Open navigation">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
                 </button>
-                <span class="d-none d-sm-block small fw-semibold text-muted-cf">Student Portal</span>
+                <span class="d-none d-sm-block small fw-semibold text-muted-cf">{{ data_get($studentData, 'role') === 'teacher' ? 'Teacher Portal' : 'Student Portal' }}</span>
             </div>
             <div class="d-flex align-items-center gap-2">
                 @if ($preview)<span class="badge text-bg-warning">Preview mode</span>@endif

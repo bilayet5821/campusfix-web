@@ -5,6 +5,7 @@ namespace App\Enums;
 enum UserRole: string
 {
     case Student = 'student';
+    case Teacher = 'teacher';
     case Staff = 'staff';
     case Admin = 'admin';
 
@@ -20,6 +21,7 @@ enum UserRole: string
     {
         return match ($this) {
             self::Student => 'Student',
+            self::Teacher => 'Teacher',
             self::Staff => 'Maintenance Staff',
             self::Admin => 'Administrator',
         };

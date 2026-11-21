@@ -229,4 +229,72 @@ class UserAccessControlTest extends TestCase
         $this->assertSame($staff->id, $issue->fresh()->assigned_to);
         $this->assertNotNull($building->id);
     }
+
+    public function test_admin_can_create_teacher_account_and_teacher_can_login_and_report_issues(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $department = Department::factory()->create(['name' => 'Computer Science & Engineering']);
+
+        // Admin panel create form includes Teacher account option
+        $this->actingAs($admin)
+            ->get(route('admin.users.create'))
+            ->assertOk()
+            ->assertSee('Teacher');
+
+        // Admin creates a Teacher account (no student_id required)
+        $this->actingAs($admin)
+            ->post(route('admin.users.store'), [
+                'name' => 'Prof. Rahman',
+                'role' => UserRole::Teacher->value,
+                'email' => 'rahman@campusfix.edu',
+                'department_id' => $department->id,
+                'phone' => '01711555555',
+                'password' => 'TeacherPass123!',
+                'password_confirmation' => 'TeacherPass123!',
+                'is_active' => '1',
+                'permissions' => FeaturePermission::defaultsForRole(UserRole::Teacher),
+            ])
+            ->assertRedirect(route('admin.users.index'))
+            ->assertSessionHas('success');
+
+        $teacher = User::where('email', 'rahman@campusfix.edu')->firstOrFail();
+        $this->assertTrue($teacher->isTeacher());
+        $this->assertNull($teacher->student_id);
+
+        // Log out admin, then teacher logs in and lands on reporter dashboard labeled Teacher Portal
+        $this->post(route('logout'));
+
+        $this->post(route('login.store'), [
+            'email' => 'rahman@campusfix.edu',
+            'password' => 'TeacherPass123!',
+        ])->assertRedirect(route('student.dashboard'));
+
+        $this->actingAs($teacher)
+            ->get(route('student.dashboard'))
+            ->assertOk()
+            ->assertSee('Teacher Portal')
+            ->assertSee('Teacher workspace');
+
+        // Teacher can open report form, but cannot access admin user management by default
+        $this->actingAs($teacher)->get(route('student.issues.create'))->assertOk();
+        $this->actingAs($teacher)->get(route('admin.users.index'))->assertForbidden();
+
+        // Admin can also grant extra features (e.g., manage_issues) to the Teacher
+        $this->actingAs($admin)
+            ->patch(route('admin.users.update', $teacher), [
+                'name' => $teacher->name,
+                'role' => UserRole::Teacher->value,
+                'email' => $teacher->email,
+                'department_id' => $department->id,
+                'is_active' => '1',
+                'permissions' => [
+                    FeaturePermission::ViewStudentPortal->value,
+                    FeaturePermission::CreateIssues->value,
+                    FeaturePermission::ManageIssues->value,
+                ],
+            ])
+            ->assertRedirect(route('admin.users.index'));
+
+        $this->actingAs($teacher->fresh())->get(route('admin.issues.index'))->assertOk();
+    }
 }

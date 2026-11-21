@@ -2,7 +2,7 @@
 
 @section('title', 'Create User Account')
 @section('page_heading', 'Create User Account')
-@section('page_description', 'Provision a new student, maintenance staff, or administrator account with custom feature access.')
+@section('page_description', 'Provision a new student, teacher, maintenance staff, or administrator account with custom feature access.')
 
 @section('breadcrumbs')
     <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Users &amp; Access</a></li>
