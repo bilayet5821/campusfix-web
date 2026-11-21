@@ -4,6 +4,7 @@ import './sidebar';
 import './image-preview';
 import './form-validation';
 import './location-selector';
+import './user-permissions';
 
 window.bootstrap = bootstrap;
 

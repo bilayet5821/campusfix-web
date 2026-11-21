@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\FeaturePermission;
 use App\Enums\IssuePriority;
 use App\Enums\IssueStatus;
-use App\Enums\UserRole;
+use App\Models\User;
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -12,7 +14,7 @@ class UpdateIssueRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->isAdmin() ?? false;
+        return $this->user()?->hasPermission(FeaturePermission::ManageIssues) ?? false;
     }
 
     protected function prepareForValidation(): void
@@ -35,7 +37,16 @@ class UpdateIssueRequest extends FormRequest
             'assigned_to' => [
                 'nullable',
                 'integer',
-                Rule::exists('users', 'id')->where('role', UserRole::Admin->value),
+                function (string $attribute, mixed $value, Closure $fail): void {
+                    if ($value === null || $value === '') {
+                        return;
+                    }
+
+                    $exists = User::assignable()->whereKey((int) $value)->exists();
+                    if (! $exists) {
+                        $fail('Issues can only be assigned to an active administrator, staff member, or authorized issue manager.');
+                    }
+                },
             ],
             'admin_note' => ['nullable', 'string', 'max:2000'],
             'resolution_note' => ['nullable', 'string', 'max:2000'],

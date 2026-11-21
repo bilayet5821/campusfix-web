@@ -1,8 +1,7 @@
 @php
     $previewLogin = app()->environment('local') && Route::has('preview.login') ? route('preview.login') : null;
-    $previewRegister = app()->environment('local') && Route::has('preview.register') ? route('preview.register') : null;
     $loginUrl = Route::has('login') ? route('login') : $previewLogin;
-    $registerUrl = Route::has('register') ? route('register') : $previewRegister;
+    $portalUrl = auth()->check() ? route(auth()->user()->dashboardRouteName()) : null;
 @endphp
 
 <nav class="navbar navbar-expand-lg fixed-top site-navbar" data-site-navbar aria-label="Primary navigation">
@@ -22,18 +21,14 @@
             </ul>
 
             <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2 mt-3 mt-lg-0">
-                @if ($loginUrl)
-                    <a class="btn btn-link text-decoration-none fw-bold" href="{{ $loginUrl }}">Login</a>
+                @if ($portalUrl)
+                    <a class="btn btn-primary" href="{{ $portalUrl }}">Open Portal</a>
+                @elseif ($loginUrl)
+                    <a class="btn btn-primary" href="{{ $loginUrl }}">Sign In</a>
                 @else
-                    <span class="auth-placeholder" aria-disabled="true" title="Student login will be available when authentication is connected">
+                    <span class="auth-placeholder" aria-disabled="true" title="Login will be available when authentication is connected">
                         Login <span class="soon-badge">Soon</span>
                     </span>
-                @endif
-
-                @if ($registerUrl)
-                    <a class="btn btn-primary" href="{{ $registerUrl }}">Get Started</a>
-                @else
-                    <a class="btn btn-primary" data-navbar-link href="#get-started">Get Started</a>
                 @endif
             </div>
         </div>

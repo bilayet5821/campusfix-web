@@ -9,24 +9,27 @@ This document defines the production interfaces expected by the Blade frontend. 
 | GET | `home` | Public landing page |
 | GET | `login` | Login form |
 | POST | `login.store` | Authenticate a user |
-| GET | `register` | Student registration form |
-| POST | `register.store` | Register a student |
 | POST | `logout` | End the authenticated session |
 | GET | `student.dashboard` | Student dashboard |
 | GET | `student.issues.index` | Current student's reports |
 | GET | `student.issues.create` | New report form |
 | POST | `student.issues.store` | Create a report |
 | GET | `student.issues.show` | Current student's report details |
-| GET | `admin.dashboard` | Admin dashboard |
+| GET | `admin.dashboard` | Admin / staff operations dashboard |
 | GET | `admin.issues.index` | All authorized issue reports |
-| GET | `admin.issues.show` | Admin issue details |
-| GET | `admin.issues.edit` | Admin issue management form |
+| GET | `admin.issues.show` | Admin / staff issue details |
+| GET | `admin.issues.edit` | Admin / staff issue management form |
 | PATCH | `admin.issues.update` | Update workflow fields and notes |
-| GET | `admin.locations.index` | Admin buildings & rooms directory and creation forms |
-| POST | `admin.buildings.store` | Add a new campus building (admin only) |
-| POST | `admin.locations.store` | Add a new room/area under a building (admin only) |
+| GET | `admin.locations.index` | Buildings & rooms directory and creation forms |
+| POST | `admin.buildings.store` | Add a new campus building |
+| POST | `admin.locations.store` | Add a new room/area under a building |
+| GET | `admin.users.index` | User accounts & feature access directory |
+| GET | `admin.users.create` | Create new user account form (any role + feature permissions) |
+| POST | `admin.users.store` | Store a new user account |
+| GET | `admin.users.edit` | Edit user account & toggle feature access permissions |
+| PATCH | `admin.users.update` | Update user account, active status, and feature permissions |
 
-Production routes should use `auth` middleware and role/authorization middleware or policies. Student show routes must enforce ownership server-side. Admin routes must require the `admin` role.
+Public self-registration is disabled; only administrators with `manage_users` can create accounts and grant/revoke individual feature permissions (`view_student_portal`, `create_issues`, `view_admin_dashboard`, `manage_issues`, `manage_locations`, `manage_users`) for any user type (`student`, `staff`, `admin`). Student show routes enforce ownership server-side.
 
 ## Form fields
 

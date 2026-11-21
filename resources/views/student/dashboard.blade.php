@@ -14,7 +14,11 @@
     $activities = $recentActivity ?? collect();
 @endphp
 
-@section('page_actions')<a class="btn btn-primary" href="{{ $createUrl }}">+ New Report</a>@endsection
+@section('page_actions')
+    @if ($preview || auth()->user()?->hasPermission('create_issues'))
+        <a class="btn btn-primary" href="{{ $createUrl }}">+ New Report</a>
+    @endif
+@endsection
 
 @section('content')
     <div class="row g-3 mb-4">

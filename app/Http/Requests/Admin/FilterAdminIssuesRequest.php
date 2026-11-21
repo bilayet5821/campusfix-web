@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\FeaturePermission;
 use App\Enums\IssuePriority;
 use App\Enums\IssueStatus;
 use Illuminate\Foundation\Http\FormRequest;
@@ -13,7 +14,7 @@ class FilterAdminIssuesRequest extends FormRequest
 
     public function authorize(): bool
     {
-        return $this->user()?->isAdmin() ?? false;
+        return $this->user()?->hasPermission(FeaturePermission::ManageIssues) ?? false;
     }
 
     /**

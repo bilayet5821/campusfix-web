@@ -14,7 +14,11 @@
     $categoryOptions = $categories ?? collect();
 @endphp
 
-@section('page_actions')<a class="btn btn-primary" href="{{ $createUrl }}">+ Report Issue</a>@endsection
+@section('page_actions')
+    @if ($preview || auth()->user()?->hasPermission('create_issues'))
+        <a class="btn btn-primary" href="{{ $createUrl }}">+ Report Issue</a>
+    @endif
+@endsection
 
 @section('content')
     <form class="filter-bar mb-4" method="GET" action="{{ $indexUrl }}" aria-label="Filter reports">

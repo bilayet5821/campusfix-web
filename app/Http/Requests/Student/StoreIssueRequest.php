@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Student;
 
+use App\Enums\FeaturePermission;
 use App\Enums\IssuePriority;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
@@ -12,7 +13,7 @@ class StoreIssueRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->isStudent() ?? false;
+        return $this->user()?->hasPermission(FeaturePermission::CreateIssues) ?? false;
     }
 
     protected function prepareForValidation(): void

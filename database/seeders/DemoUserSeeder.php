@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\FeaturePermission;
 use App\Enums\UserRole;
 use App\Models\Department;
 use App\Models\User;
@@ -20,32 +21,40 @@ class DemoUserSeeder extends Seeder
                 'name' => 'Nadia Karim',
                 'email' => 'admin@campusfix.edu',
                 'password' => 'Admin@12345',
+                'role' => UserRole::Admin->value,
+                'permissions' => FeaturePermission::defaultsForRole(UserRole::Admin),
                 'phone' => '01711000001',
             ],
             [
                 'name' => 'Mahmudul Hasan (Facilities)',
                 'email' => 'facilities@campusfix.edu',
                 'password' => 'Admin@12345',
+                'role' => UserRole::Staff->value,
+                'permissions' => FeaturePermission::defaultsForRole(UserRole::Staff),
                 'phone' => '01711000002',
             ],
             [
                 'name' => 'Farhana Akter (IT Support)',
                 'email' => 'itsupport@campusfix.edu',
                 'password' => 'Admin@12345',
+                'role' => UserRole::Staff->value,
+                'permissions' => FeaturePermission::defaultsForRole(UserRole::Staff),
                 'phone' => '01711000003',
             ],
         ];
 
-        foreach ($admins as $admin) {
+        foreach ($admins as $account) {
             User::updateOrCreate(
-                ['email' => $admin['email']],
+                ['email' => $account['email']],
                 [
-                    'name' => $admin['name'],
+                    'name' => $account['name'],
                     'student_id' => null,
-                    'password' => Hash::make($admin['password']),
-                    'role' => UserRole::Admin->value,
+                    'password' => Hash::make($account['password']),
+                    'role' => $account['role'],
+                    'permissions' => $account['permissions'],
+                    'is_active' => true,
                     'department_id' => null,
-                    'phone' => $admin['phone'],
+                    'phone' => $account['phone'],
                     'email_verified_at' => now(),
                 ]
             );
@@ -78,6 +87,8 @@ class DemoUserSeeder extends Seeder
                     'student_id' => $student['student_id'],
                     'password' => Hash::make($student['password']),
                     'role' => UserRole::Student->value,
+                    'permissions' => FeaturePermission::defaultsForRole(UserRole::Student),
+                    'is_active' => true,
                     'department_id' => $student['department_id'],
                     'phone' => $student['phone'],
                     'email_verified_at' => now(),

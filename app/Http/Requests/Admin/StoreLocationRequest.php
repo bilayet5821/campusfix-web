@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\FeaturePermission;
 use App\Models\Building;
 use App\Models\Location;
 use Closure;
@@ -12,7 +13,7 @@ class StoreLocationRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->isAdmin() ?? false;
+        return $this->user()?->hasPermission(FeaturePermission::ManageLocations) ?? false;
     }
 
     protected function prepareForValidation(): void

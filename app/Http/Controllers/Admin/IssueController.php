@@ -56,7 +56,7 @@ class IssueController extends Controller
 
         $issue->load(['category', 'location', 'reporter', 'assignee']);
 
-        $assignees = User::admins()
+        $assignees = User::assignable()
             ->orderBy('name')
             ->get(['id', 'name', 'email', 'role']);
 

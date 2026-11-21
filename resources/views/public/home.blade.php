@@ -6,7 +6,9 @@
 @php
     $previewAvailable = app()->environment('local') && Route::has('preview.student.issues.create');
     $reportUrl = Route::has('student.issues.create') ? route('student.issues.create') : ($previewAvailable ? route('preview.student.issues.create') : '#get-started');
-    $registerUrl = Route::has('register') ? route('register') : (app()->environment('local') && Route::has('preview.register') ? route('preview.register') : null);
+    $ctaUrl = auth()->check()
+        ? route(auth()->user()->dashboardRouteName())
+        : (Route::has('login') ? route('login') : null);
 @endphp
 
 @section('content')
@@ -213,12 +215,12 @@
                 <div class="position-relative" style="z-index: 1;">
                     <span class="section-label">Ready for what comes next</span>
                     <h2 class="section-title" id="cta-title">A better way to speak up about campus issues</h2>
-                    <p class="section-intro mb-4">Student accounts and secure issue reporting will be available when the authentication and reporting services are connected.</p>
-                    @if ($registerUrl)
-                        <a class="btn btn-primary btn-lg" href="{{ $registerUrl }}">Create Student Account</a>
+                    <p class="section-intro mb-4">Accounts and feature permissions are provisioned by the CampusFix Administrator to keep campus reporting secure.</p>
+                    @if ($ctaUrl)
+                        <a class="btn btn-primary btn-lg" href="{{ $ctaUrl }}">{{ auth()->check() ? 'Go to Your Portal' : 'Sign In to CampusFix' }}</a>
                     @else
-                        <button class="btn btn-primary btn-lg" type="button" disabled aria-describedby="access-note">Student Access Coming Soon</button>
-                        <p class="small text-muted-cf mt-3 mb-0" id="access-note">Frontend preview only—no account or report is created yet.</p>
+                        <button class="btn btn-primary btn-lg" type="button" disabled aria-describedby="access-note">Campus Access Managed by Admin</button>
+                        <p class="small text-muted-cf mt-3 mb-0" id="access-note">Contact the campus administrator to receive login credentials.</p>
                     @endif
                 </div>
             </div>

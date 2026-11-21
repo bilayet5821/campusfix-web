@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Student;
 
+use App\Enums\FeaturePermission;
 use App\Enums\IssueStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -12,7 +13,7 @@ class FilterStudentIssuesRequest extends FormRequest
 
     public function authorize(): bool
     {
-        return $this->user()?->isStudent() ?? false;
+        return $this->user()?->hasPermission(FeaturePermission::ViewStudentPortal) ?? false;
     }
 
     /**

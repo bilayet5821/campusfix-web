@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\FeaturePermission;
 use App\Models\IssueAttachment;
 use App\Models\User;
 
@@ -15,6 +16,7 @@ class IssueAttachmentPolicy
             return false;
         }
 
-        return $user->isAdmin() || $issue->reporter_id === $user->id;
+        return $user->hasPermission(FeaturePermission::ManageIssues)
+            || $issue->reporter_id === $user->id;
     }
 }

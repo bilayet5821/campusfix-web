@@ -49,6 +49,10 @@
             </form>
         </div>
 
-        <p class="text-center text-muted-cf small mt-4 mb-0">New to CampusFix? <a class="auth-link {{ $registerUrl === '#' ? 'pe-none opacity-50' : '' }}" href="{{ $registerUrl }}">Create a student account</a></p>
+        @if ($preview)
+            <p class="text-center text-muted-cf small mt-4 mb-0">New to CampusFix? <a class="auth-link {{ $registerUrl === '#' ? 'pe-none opacity-50' : '' }}" href="{{ $registerUrl }}">Create a student account</a></p>
+        @else
+            <p class="text-center text-muted-cf small mt-4 mb-0">Need an account? Accounts are created and managed by the CampusFix Administrator.</p>
+        @endif
     </div>
 @endsection
