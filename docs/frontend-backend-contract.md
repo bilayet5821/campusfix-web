@@ -70,10 +70,10 @@ Recommended attachment validation: maximum five files; JPG, PNG, or WebP; maximu
 - `status` — required status enum
 - `priority` — required priority enum
 - `assigned_to` — nullable existing authorized staff/admin user ID
-- `admin_note` — nullable string, maximum 2000 characters
+- `admin_note` — nullable internal-only string, maximum 2000 characters; never expose it to students or public responses
 - `resolution_note` — nullable string, maximum 2000 characters
 
-Changing status should create a status-history record in the same transaction. Define whether `admin_note` is student-visible; the current student detail page displays it only when supplied to the view.
+Changing status should create a status-history record in the same transaction. `admin_note` is strictly internal and must never be copied into student-visible status-history notes. `resolution_note` is the student-visible resolution update.
 
 ## View variables
 
@@ -103,7 +103,8 @@ Distribution items contain `label`, `count`, and `percentage`. Activity items co
 Issue templates access:
 
 - `id`, `reference_number`, `title`, `description`, `status`, `priority`
-- `admin_note`, `resolution_note`, `created_at`, `updated_at`
+- `resolution_note`, `created_at`, `updated_at`
+- `admin_note` on admin-only templates and responses; exclude it from every student-facing view model and serialized response
 - `category.id`, `category.name`
 - `location.id`, `location.name`
 - `reporter.id`, `reporter.name`, `reporter.student_id`, `reporter.email`

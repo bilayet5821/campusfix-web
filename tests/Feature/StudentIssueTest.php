@@ -253,20 +253,69 @@ class StudentIssueTest extends TestCase
         $this->assertDatabaseCount('issues', 0);
     }
 
-    public function test_student_show_page_displays_admin_note_when_resolution_note_is_null(): void
+    public function test_student_show_page_hides_internal_admin_notes_and_preserves_resolution_updates(): void
     {
         $student = User::factory()->student()->create();
+        $admin = User::factory()->admin()->create();
+        $internalNote = 'INTERNAL: Facilities access code is 7419.';
+        $resolutionNote = 'The damaged projector cable was replaced and tested.';
         $issue = Issue::factory()->create([
             'reporter_id' => $student->id,
-            'admin_note' => 'Facilities team scheduled room inspection at 2 PM.',
-            'resolution_note' => null,
+            'status' => IssueStatus::Resolved->value,
+            'admin_note' => $internalNote,
+            'resolution_note' => $resolutionNote,
+        ]);
+
+        // Simulate legacy histories written before admin notes became strictly internal.
+        $issue->statusHistories()->create([
+            'actor_id' => $admin->id,
+            'old_status' => IssueStatus::UnderReview->value,
+            'status' => IssueStatus::UnderReview->value,
+            'title' => 'Administrative notes updated',
+            'note' => $internalNote,
+        ]);
+        $issue->statusHistories()->create([
+            'actor_id' => $admin->id,
+            'old_status' => IssueStatus::UnderReview->value,
+            'status' => IssueStatus::InProgress->value,
+            'title' => 'Work in progress',
+            'note' => "Status changed. {$internalNote}",
+        ]);
+        $issue->statusHistories()->create([
+            'actor_id' => $admin->id,
+            'old_status' => IssueStatus::InProgress->value,
+            'status' => IssueStatus::Resolved->value,
+            'title' => 'Issue resolved',
+            'note' => "Status changed to Resolved. {$resolutionNote}",
         ]);
 
         $this->actingAs($student)
             ->get(route('student.issues.show', $issue))
             ->assertOk()
-            ->assertSee('Administrator note')
-            ->assertSee('Facilities team scheduled room inspection at 2 PM.');
+            ->assertSee('Resolution note')
+            ->assertSee($resolutionNote)
+            ->assertDontSee('Administrator note')
+            ->assertDontSee($internalNote)
+            ->assertViewHas('issue', fn (Issue $viewIssue) => $viewIssue->admin_note === null)
+            ->assertViewHas('statusHistory', fn ($history) => $history->count() === 2
+                && $history->every(fn ($entry) => ! str_contains((string) $entry->note, $internalNote)));
+
+        $this->actingAs($student)
+            ->get(route('student.dashboard'))
+            ->assertOk()
+            ->assertSee($resolutionNote)
+            ->assertDontSee($internalNote)
+            ->assertViewHas('recentActivity', fn ($activity) => $activity->every(
+                fn ($entry) => ! str_contains((string) $entry->description, $internalNote)
+            ));
+
+        // Authorized administrators retain access to the internal note.
+        $this->actingAs($admin)
+            ->get(route('admin.issues.show', $issue))
+            ->assertOk()
+            ->assertSee($internalNote);
+
+        $this->assertArrayNotHasKey('admin_note', $issue->fresh()->toArray());
     }
 
     public function test_student_issue_list_filters_paginates_and_isolates_other_students(): void

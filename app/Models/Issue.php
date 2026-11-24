@@ -14,6 +14,10 @@ class Issue extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $hidden = [
+        'admin_note',
+    ];
+
     protected $fillable = [
         'reference_number',
         'reporter_id',

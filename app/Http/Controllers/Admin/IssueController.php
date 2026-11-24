@@ -72,7 +72,6 @@ class IssueController extends Controller
             $oldStatus = $issue->status;
             $oldPriority = $issue->priority;
             $oldAssignedTo = $issue->assigned_to;
-            $oldAdminNote = $issue->admin_note;
             $oldResolutionNote = $issue->resolution_note;
 
             $newStatus = $validated['status'];
@@ -98,16 +97,16 @@ class IssueController extends Controller
             $statusChanged = $oldStatus !== $newStatus;
             $assignmentChanged = $oldAssignedTo !== $newAssignedTo;
             $priorityChanged = $oldPriority !== $newPriority;
-            $notesChanged = $oldAdminNote !== $issue->admin_note || $oldResolutionNote !== $issue->resolution_note;
+            $resolutionNoteChanged = $oldResolutionNote !== $issue->resolution_note;
 
-            if ($statusChanged || $assignmentChanged || $priorityChanged || $notesChanged) {
+            if ($statusChanged || $assignmentChanged || $priorityChanged || $resolutionNoteChanged) {
                 $statusEnum = IssueStatus::from($newStatus);
 
                 $title = match (true) {
                     $statusChanged => $statusEnum->defaultHistoryTitle(),
                     $assignmentChanged => $newAssignedTo ? 'Issue assigned' : 'Assignment cleared',
                     $priorityChanged => 'Priority updated to '.ucfirst($newPriority),
-                    default => 'Administrative notes updated',
+                    default => 'Resolution update',
                 };
 
                 $noteParts = [];
@@ -130,12 +129,8 @@ class IssueController extends Controller
                     $noteParts[] = 'Priority changed from '.ucfirst($oldPriority).' to '.ucfirst($newPriority).'.';
                 }
 
-                if (in_array($newStatus, [IssueStatus::Resolved->value, IssueStatus::Closed->value, IssueStatus::Rejected->value], true)
-                    && filled($issue->resolution_note)
-                    && ($statusChanged || $oldResolutionNote !== $issue->resolution_note)) {
+                if (filled($issue->resolution_note) && ($statusChanged || $resolutionNoteChanged)) {
                     $noteParts[] = $issue->resolution_note;
-                } elseif (filled($issue->admin_note) && ($statusChanged || $oldAdminNote !== $issue->admin_note)) {
-                    $noteParts[] = $issue->admin_note;
                 }
 
                 $issue->statusHistories()->create([

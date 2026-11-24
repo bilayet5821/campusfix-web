@@ -13,6 +13,12 @@ class DemoUserSeeder extends Seeder
 {
     public function run(): void
     {
+        if (! app()->environment(['local', 'testing'])) {
+            $this->command?->warn('Demo users were not seeded because the application is not running locally or in testing.');
+
+            return;
+        }
+
         $cse = Department::where('code', 'CSE')->first();
         $eee = Department::where('code', 'EEE')->first();
 

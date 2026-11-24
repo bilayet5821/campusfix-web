@@ -126,7 +126,35 @@ class IssueController extends Controller
             'statusHistories.actor',
         ]);
 
-        $statusHistory = $issue->statusHistories;
+        $resolutionNote = trim((string) $issue->resolution_note);
+
+        $statusHistory = $issue->statusHistories
+            ->reject(function ($history) use ($resolutionNote): bool {
+                if ($history->title !== 'Administrative notes updated') {
+                    return false;
+                }
+
+                return $resolutionNote === '' || ! str_contains((string) $history->note, $resolutionNote);
+            })
+            ->map(function ($history) use ($issue, $resolutionNote) {
+                if ($history->actor_id !== $issue->reporter_id) {
+                    $publicNote = $resolutionNote !== '' && str_contains((string) $history->note, $resolutionNote)
+                        ? $resolutionNote
+                        : null;
+
+                    $history->setAttribute('note', $publicNote);
+
+                    if ($history->title === 'Administrative notes updated' && $publicNote !== null) {
+                        $history->setAttribute('title', 'Resolution update');
+                    }
+                }
+
+                return $history;
+            })
+            ->values();
+
+        $issue->setRelation('statusHistories', $statusHistory);
+        unset($issue->admin_note);
 
         return view('student.issues.show', compact('student', 'issue', 'statusHistory'));
     }

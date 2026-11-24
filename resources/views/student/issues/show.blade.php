@@ -36,10 +36,10 @@
                 </div>
             </article>
 
-            @if (data_get($issue, 'resolution_note') || data_get($issue, 'admin_note'))
+            @if (data_get($issue, 'resolution_note'))
                 <section class="resolution-note mb-4" aria-labelledby="resolution-note-title">
-                    <h2 class="h6 mb-2" id="resolution-note-title">{{ data_get($issue, 'resolution_note') ? 'Resolution note' : 'Administrator note' }}</h2>
-                    <p class="small mb-0">{{ data_get($issue, 'resolution_note', data_get($issue, 'admin_note')) }}</p>
+                    <h2 class="h6 mb-2" id="resolution-note-title">Resolution note</h2>
+                    <p class="small mb-0">{{ data_get($issue, 'resolution_note') }}</p>
                 </section>
             @endif
 

@@ -12,8 +12,13 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             CategorySeeder::class,
             LocationSeeder::class,
-            DemoUserSeeder::class,
-            DemoIssueSeeder::class,
         ]);
+
+        if (app()->environment(['local', 'testing'])) {
+            $this->call([
+                DemoUserSeeder::class,
+                DemoIssueSeeder::class,
+            ]);
+        }
     }
 }

@@ -15,6 +15,12 @@ class DemoIssueSeeder extends Seeder
 {
     public function run(): void
     {
+        if (! app()->environment(['local', 'testing'])) {
+            $this->command?->warn('Demo issues were not seeded because the application is not running locally or in testing.');
+
+            return;
+        }
+
         $student1 = User::where('email', 'student@campusfix.edu')->first();
         $student2 = User::where('email', 'student2@campusfix.edu')->first();
         $leadAdmin = User::where('email', 'admin@campusfix.edu')->first();

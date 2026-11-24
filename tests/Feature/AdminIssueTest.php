@@ -174,6 +174,10 @@ class AdminIssueTest extends TestCase
             'status' => IssueStatus::Resolved->value,
         ]);
 
+        $resolvedHistory = $issue->statusHistories()->firstOrFail();
+        $this->assertStringContainsString('Replaced faulty breaker and tested circuit.', (string) $resolvedHistory->note);
+        $this->assertStringNotContainsString('Verified with electrical team.', (string) $resolvedHistory->note);
+
         // Saving again with identical values should NOT spam duplicate history entries
         $historyCount = $issue->statusHistories()->count();
         $this->actingAs($admin)
@@ -185,6 +189,21 @@ class AdminIssueTest extends TestCase
                 'resolution_note' => 'Replaced faulty breaker and tested circuit.',
             ])
             ->assertRedirect(route('admin.issues.show', $issue));
+        $this->assertSame($historyCount, $issue->statusHistories()->count());
+
+        // Updating only the internal admin note persists it without creating student-visible history.
+        $this->actingAs($admin)
+            ->patch(route('admin.issues.update', $issue), [
+                'status' => IssueStatus::Resolved->value,
+                'priority' => IssuePriority::High->value,
+                'assigned_to' => $assignee->id,
+                'admin_note' => 'Internal follow-up scheduled for next week.',
+                'resolution_note' => 'Replaced faulty breaker and tested circuit.',
+            ])
+            ->assertRedirect(route('admin.issues.show', $issue));
+
+        $issue->refresh();
+        $this->assertSame('Internal follow-up scheduled for next week.', $issue->admin_note);
         $this->assertSame($historyCount, $issue->statusHistories()->count());
 
         // Reopening clears resolved_at and allows unassigning
@@ -201,6 +220,7 @@ class AdminIssueTest extends TestCase
         $issue->refresh();
         $this->assertNull($issue->resolved_at);
         $this->assertNull($issue->assigned_to);
+        $this->assertStringNotContainsString('Issue recurred; reopening.', (string) $issue->statusHistories()->firstOrFail()->note);
 
         // Cannot assign a student as assignee
         $this->actingAs($admin)
